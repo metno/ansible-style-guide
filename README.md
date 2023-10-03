@@ -1,4 +1,4 @@
-# MET Ansible Style Guide v1.0.0
+# MET Ansible Style Guide v2.0.0
 
 ## Index
 
