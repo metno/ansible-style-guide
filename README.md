@@ -14,7 +14,7 @@
 
 ## Best practices
 
-Follow Ansible [Best Practices](https://docs.ansible.com/ansible/latest/user_guide/playbooks_best_practices.html) and Ansible [Default Rules](https://docs.ansible.com/ansible-lint/rules/default_rules.html) for linting. You can see exceptions to lint rules for the current project in the file `.ansible-lint`.
+Follow [Sample Ansible setup](https://docs.ansible.com/ansible/latest/tips_tricks/sample_setup.html) and use Ansible Lint, see [documentation](https://ansible.readthedocs.io/projects/lint/).
 
 ### Why do this?
 
@@ -32,7 +32,7 @@ Always start your file with the YAML heading which is `---`. Please add comments
 
 ```yaml
 - name: Change status of user foo
-  service:
+  ansible.builtin.service:
     enabled: true
     name: foo
     state: '{{ state }}'
@@ -46,7 +46,7 @@ Always start your file with the YAML heading which is `---`. Please add comments
 # Example: ansible-playbook -e state=stopped playbook.yml
 ---
 - name: Change status of user foo
-  service:
+  ansible.builtin.service:
     enabled: true
     name: foo
     state: '{{ state }}'
@@ -72,7 +72,7 @@ It's just Unix best practices. It avoids messing up your prompt when you `cat` a
 ```yaml
 ---
 - name: start chrony NTP daemon
-  service:
+  ansible.builtin.service:
     name: chrony
     state: started
     enabled: 1
@@ -84,7 +84,7 @@ It's just Unix best practices. It avoids messing up your prompt when you `cat` a
 ```yaml
 ---
 - name: start chrony NTP daemon
-  service:
+  ansible.builtin.service:
     name: chrony
     state: started
     enabled: true
@@ -105,7 +105,7 @@ Only use on space after colon when you define key value pair.
 ```yaml
 ---
 - name: start chrony NTP daemon
-  service:
+  ansible.builtin.service:
     name    : chrony
     state   : started
     enabled : true
@@ -117,7 +117,7 @@ Only use on space after colon when you define key value pair.
 ```yaml
 ---
 - name: start chrony NTP daemon
-  service:
+  ansible.builtin.service:
     name: chrony
     state: started
     enabled: true
@@ -131,7 +131,7 @@ Keep to only one standard. In our case **always use the "map" syntax**. This is 
 ```yaml
 ---
 - name: disable ntpd
-  service: name='{{ ntp_service }}' state=stopped enabled=false
+  ansible.builtin.service: name='{{ ntp_service }}' state=stopped enabled=false
   become: true
 ```
 
@@ -140,7 +140,7 @@ Keep to only one standard. In our case **always use the "map" syntax**. This is 
 ```yaml
 ---
 - name: disable ntpd
-  service:
+  ansible.builtin.service:
     name: '{{ ntp_service }}'
     state: stopped
     enabled: false
@@ -170,7 +170,7 @@ Playbook definitions should follow this order.
 - name: update root authorized_keys for all machines
   hosts:
     - all
-  become: yes
+  become: true
 
   vars:
     root_keys_users:
@@ -185,11 +185,11 @@ Playbook definitions should follow this order.
         root_keys_users: "{{ root_keys_users | union( root_keys_users_custom|default([]) ) }}"
 
   roles:
-    - root-keys
+    - role: root-keys
 
   tasks:
     - name: print out debug message
-      debug:
+      ansible.builtin.debug:
         msg: "fee foo faa"
 ```
 
@@ -209,7 +209,7 @@ A task should be declared in this order.
 ```yaml
 ---
 - name: unhold packages
-  shell: 'apt-mark -s unhold {{ item }} && apt-mark unhold {{ item }}'
+  ansible.builtin.shell: 'apt-mark -s unhold {{ item }} && apt-mark unhold {{ item }}'
   args:
     executable: /bin/bash
   changed_when: apt_mark_unhold.rc == 0 and "already" not in apt_mark_unhold.stdout
@@ -242,7 +242,7 @@ Always use `snake_case` for variable names.
 ```yaml
 ---
 - name: set my variables
-  set_fact:
+  ansible.builtin.set_fact:
     aBoolean: false
     anint: 101
     A_STRING: bar
@@ -253,7 +253,7 @@ Always use `snake_case` for variable names.
 ```yaml
 ---
 - name: set my variables
-  set_fact:
+  ansible.builtin.set_fact:
     a_boolean: false
     an_int: 101
     a_string: bar
